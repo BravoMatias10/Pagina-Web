@@ -1,1 +1,63 @@
-{% load static %}<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Audita · Protección de datos</title><link rel="stylesheet" href="{% static 'audits/style.css' %}"></head><body><aside><a class="brand" href="/">◈ <strong>audita</strong></a><div class="tag">PRIVACIDAD DIGITAL</div><nav><a href="/">▦ &nbsp; Panel de auditorías</a><a href="{% url 'new' %}">＋ &nbsp; Nueva auditoría</a>{% if user.is_staff %}<a href="/admin/">⚙ &nbsp; Administración</a>{% endif %}<a href="{% url 'privacy' %}">◇ &nbsp; Privacidad del servicio</a></nav><div class="aside-bottom">LEY N° 21.719<br><small>Chile · Protección de datos</small></div></aside><main><header><span>Espacio de trabajo / <b>Auditorías</b></span>{% if user.is_authenticated %}<div>{{ user.username }} · {% if user.is_staff %}Administrador{% else %}Usuario{% endif %}<form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="text">Salir</button></form></div>{% endif %}</header>{% for message in messages %}<div class="notice">{{ message }}</div>{% endfor %}{% block content %}{% endblock %}<footer>Audita · Revisión de privacidad con evidencia · No constituye certificación jurídica</footer></main></body></html>
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Audita · Protección de datos</title>
+        <link rel="stylesheet" href="{% static 'audits/style.css' %}">
+    </head>
+    <body>
+        <aside>
+            <a class="brand" href="/">
+                ◈
+                <strong>audita</strong>
+            </a>
+            <div class="tag">PRIVACIDAD DIGITAL</div>
+            <nav>
+                <a href="/">▦ &nbsp; Panel de auditorías</a>
+                <a href="{% url 'new' %}">＋ &nbsp; Nueva auditoría</a>
+                {% if user.is_staff %}
+                    <a href="/admin/">⚙ &nbsp; Administración</a>
+                {% endif %}
+                <a href="{% url 'privacy' %}">◇ &nbsp; Privacidad del servicio</a>
+            </nav>
+            <div class="aside-bottom">
+                LEY N° 21.719
+                <br>
+                <small>Chile · Protección de datos</small>
+            </div>
+        </aside>
+        <main>
+            <header>
+                <span>
+                    Espacio de trabajo /
+                    <b>
+                        Auditorías
+                    </b>
+                </span>
+                {% if user.is_authenticated %}
+                    <div>
+                        {{ user.username }} ·
+                        {% if user.is_staff %}
+                            Administrador
+                        {% else %}
+                            Usuario
+                        {% endif %}
+                        <form method="post" action="{% url 'logout' %}">
+                            {% csrf_token %}
+                            <button class="text">Salir</button>
+                        </form>
+                    </div>
+                {% endif %}
+            </header>
+            {% for message in messages %}
+                <div class="notice">{{ message }}</div>
+            {% endfor %}
+            {% block content %}{% endblock %}
+            <footer>
+                Audita · Revisión de privacidad con evidencia · No constituye certificación jurídica
+            </footer>
+        </main>
+    </body>
+</html>
