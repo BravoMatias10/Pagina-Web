@@ -1,1 +1,17 @@
-{% extends 'base.html' %}{% block content %}<div class="eyebrow">NUEVA REVISIÓN</div><h1>Conoce las señales de tu sitio</h1><p>Una revisión pasiva del HTML público, seguida de un análisis humano.</p><section class="panel narrow"><h2>¿Qué sitio vamos a revisar?</h2><form method="post">{% csrf_token %}{{ form.as_p }}<button>Iniciar auditoría →</button></form></section><div class="notice">Alcance: una página, máximo 1 MB y tres redirecciones. No ejecuta JavaScript, no inicia sesión y no realiza pruebas de intrusión. No incluyas datos personales en la URL.</div>{% endblock %}
+{% extends "base.html" %}
+{% block content %}
+    <div class="eyebrow">NUEVA REVISIÓN</div>
+    <h1>Conoce las señales de tu sitio</h1>
+    <p>Una revisión pasiva del HTML público, seguida de un análisis humano.</p>
+    <section class="panel narrow">
+        <h2>¿Qué sitio vamos a revisar?</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button>Iniciar auditoría →</button>
+        </form>
+    </section>
+    <div class="notice">
+        Alcance: una página, máximo 1 MB y tres redirecciones. No ejecuta JavaScript, no inicia sesión y no realiza pruebas de intrusión. No incluyas datos personales en la URL.
+    </div>
+{% endblock %}
