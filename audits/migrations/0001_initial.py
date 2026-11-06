@@ -15,40 +15,96 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='Audit',
+            name="Audit",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('url', models.URLField(max_length=1000)),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('results', models.JSONField(default=list)),
-                ('error', models.TextField(blank=True)),
-                ('owner', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("url", models.URLField(max_length=1000)),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                ("results", models.JSONField(default=list)),
+                ("error", models.TextField(blank=True)),
+                (
+                    "owner",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
             options={
-                'ordering': ['-created'],
+                "ordering": ["-created"],
             },
         ),
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('action', models.CharField(max_length=100)),
-                ('audit_id_record', models.PositiveIntegerField()),
-                ('created', models.DateTimeField(auto_now_add=True)),
-                ('actor', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("action", models.CharField(max_length=100)),
+                ("audit_id_record", models.PositiveIntegerField()),
+                ("created", models.DateTimeField(auto_now_add=True)),
+                (
+                    "actor",
+                    models.ForeignKey(
+                        null=True,
+                        on_delete=django.db.models.deletion.SET_NULL,
+                        to=settings.AUTH_USER_MODEL,
+                    ),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Review',
+            name="Review",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('criterion', models.CharField(max_length=80)),
-                ('status', models.CharField(choices=[('pending', 'Pendiente'), ('yes', 'Evidenciado'), ('no', 'No evidenciado'), ('na', 'No aplica')], default='pending', max_length=12)),
-                ('evidence', models.TextField(blank=True, max_length=4000)),
-                ('audit', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='reviews', to='audits.audit')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("criterion", models.CharField(max_length=80)),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("pending", "Pendiente"),
+                            ("yes", "Evidenciado"),
+                            ("no", "No evidenciado"),
+                            ("na", "No aplica"),
+                        ],
+                        default="pending",
+                        max_length=12,
+                    ),
+                ),
+                ("evidence", models.TextField(blank=True, max_length=4000)),
+                (
+                    "audit",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="reviews",
+                        to="audits.audit",
+                    ),
+                ),
             ],
             options={
-                'unique_together': {('audit', 'criterion')},
+                "unique_together": {("audit", "criterion")},
             },
         ),
     ]
