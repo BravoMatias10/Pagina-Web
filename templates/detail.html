@@ -1,1 +1,63 @@
-{% extends 'base.html' %}{% block content %}<div class="eyebrow">INFORME #{{ audit.pk }}</div><div class="title-row"><div><h1>Revisión de privacidad</h1><p class="url">{{ audit.url }}</p></div><a class="button" href="{% url 'pdf' audit.pk %}">↓ Descargar PDF</a></div>{% if audit.error %}<div class="notice">{{ audit.error }}</div>{% endif %}<h2>01 · Observaciones automáticas</h2><div class="findings">{% for r in audit.results %}<section class="panel"><span class="badge">{% if r.status == 'observed' %}Señal observada{% elif r.status == 'attention' %}Atención técnica{% else %}Revisión necesaria{% endif %}</span><h3>{{ r.title }}</h3><p class="url">{{ r.evidence }}</p><small>{{ r.limit }}</small></section>{% endfor %}</div><h2>02 · Revisión humana</h2><p>Registra evidencia verificable. Un criterio pendiente no permite concluir cumplimiento.</p><form method="post">{% csrf_token %}{{ forms.management_form }}{{ forms.non_form_errors }}{% for form in forms %}<section class="panel"><h3>{{ form.criterion_label }}</h3>{{ form.as_p }}</section>{% endfor %}<button>Guardar revisión</button></form><h2>03 · Compartir informe</h2><section class="panel narrow"><p>El PDF incluye las revisiones guardadas. Descárgalo para compartirlo o envíalo por correo.</p><form method="post" action="{% url 'send' audit.pk %}">{% csrf_token %}{{ send_form.as_p }}<button>Enviar PDF</button></form></section><form method="post" action="{% url 'delete' audit.pk %}">{% csrf_token %}<label><input type="checkbox" required> Confirmo que deseo eliminar esta auditoría y sus revisiones.</label><button class="danger">Eliminar auditoría</button></form>{% endblock %}
+{% extends "base.html" %}
+{% block content %}
+    <div class="eyebrow">INFORME #{{ audit.pk }}</div>
+    <div class="title-row">
+        <div>
+            <h1>Revisión de privacidad</h1>
+            <p class="url">{{ audit.url }}</p>
+        </div>
+        <a class="button" href="{% url 'pdf' audit.pk %}">↓ Descargar PDF</a>
+    </div>
+    {% if audit.error %}
+        <div class="notice">{{ audit.error }}</div>
+    {% endif %}
+    <h2>01 · Observaciones automáticas</h2>
+    <div class="findings">
+        {% for r in audit.results %}
+            <section class="panel">
+                <span class="badge">
+                    {% if r.status == "observed" %}
+                        Señal observada
+                    {% elif r.status == "attention" %}
+                        Atención técnica
+                    {% else %}
+                        Revisión necesaria
+                    {% endif %}
+                </span>
+                <h3>{{ r.title }}</h3>
+                <p class="url">{{ r.evidence }}</p>
+                <small>{{ r.limit }}</small>
+            </section>
+        {% endfor %}
+    </div>
+    <h2>02 · Revisión humana</h2>
+    <p>Registra evidencia verificable. Un criterio pendiente no permite concluir cumplimiento.</p>
+    <form method="post">
+        {% csrf_token %}
+        {{ forms.management_form }}{{ forms.non_form_errors }}
+        {% for form in forms %}
+            <section class="panel">
+                <h3>{{ form.criterion_label }}</h3>
+                {{ form.as_p }}
+            </section>
+        {% endfor %}
+        <button>Guardar revisión</button>
+    </form>
+    <h2>03 · Compartir informe</h2>
+    <section class="panel narrow">
+        <p>El PDF incluye las revisiones guardadas. Descárgalo para compartirlo o envíalo por correo.</p>
+        <form method="post" action="{% url 'send' audit.pk %}">
+            {% csrf_token %}
+            {{ send_form.as_p }}
+            <button>Enviar PDF</button>
+        </form>
+    </section>
+    <form method="post" action="{% url 'delete' audit.pk %}">
+        {% csrf_token %}
+        <label>
+            <input type="checkbox" required>
+            Confirmo que deseo eliminar esta auditoría y sus revisiones.
+        </label>
+        <button class="danger">Eliminar auditoría</button>
+    </form>
+{% endblock %}
