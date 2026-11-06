@@ -1,1 +1,76 @@
-{% extends 'base.html' %}{% block content %}<div class="eyebrow">CONTROL Y TRANSPARENCIA</div><div class="title-row"><div><h1>Tu centro de auditorías</h1><p>Revisa señales de privacidad. Documenta cada decisión.</p></div><a class="button" href="{% url 'new' %}">＋ Nueva auditoría</a></div><div class="metrics"><section><span>Auditorías registradas</span><strong>{{ total }}</strong><small>Sitios en tu espacio de trabajo</small></section><section><span>Revisiones pendientes</span><strong>{{ pending }}</strong><small>Criterios que requieren evidencia</small></section><section class="accent"><span>Marco de referencia</span><strong class="law">Ley 21.719</strong><small>Vigencia desde el 01 dic. 2026</small></section></div><div class="notice">◉ &nbsp; La automatización identifica indicios. La evaluación legal requiere revisión humana y evidencia de los procesos internos.</div><section class="panel"><h2>Auditorías recientes</h2><p class="muted">Hasta 50 registros recientes · Acceso restringido según tu rol</p>{% if audits %}<div class="table-wrap"><table><tr><th>SITIO WEB</th><th>FECHA</th><th>ANÁLISIS</th><th></th></tr>{% for a in audits %}<tr><td><strong>{{ a.url }}</strong><small>Informe #{{ a.pk }}</small></td><td>{{ a.created|date:'d M Y' }}</td><td><span class="badge">{% if a.error %}No completado{% else %}Consultar revisión manual{% endif %}</span></td><td><a href="{% url 'detail' a.pk %}">Ver informe →</a></td></tr>{% endfor %}</table></div><small>Consulta el detalle para ver el estado actual de cada criterio.</small>{% else %}<div class="empty"><span>◎</span><h3>El primer paso es conocer tu sitio</h3><p>Agrega una URL para iniciar una revisión y generar su informe.</p><a class="button" href="{% url 'new' %}">Crear primera auditoría</a></div>{% endif %}</section>{% endblock %}
+{% extends "base.html" %}
+{% block content %}
+    <div class="eyebrow">CONTROL Y TRANSPARENCIA</div>
+    <div class="title-row">
+        <div>
+            <h1>Tu centro de auditorías</h1>
+            <p>Revisa señales de privacidad. Documenta cada decisión.</p>
+        </div>
+        <a class="button" href="{% url 'new' %}">＋ Nueva auditoría</a>
+    </div>
+    <div class="metrics">
+        <section>
+            <span>Auditorías registradas</span>
+            <strong>{{ total }}</strong>
+            <small>Sitios en tu espacio de trabajo</small>
+        </section>
+        <section>
+            <span>Revisiones pendientes</span>
+            <strong>{{ pending }}</strong>
+            <small>Criterios que requieren evidencia</small>
+        </section>
+        <section class="accent">
+            <span>Marco de referencia</span>
+            <strong class="law">Ley 21.719</strong>
+            <small>Vigencia desde el 01 dic. 2026</small>
+        </section>
+    </div>
+    <div class="notice">
+        ◉ &nbsp; La automatización identifica indicios. La evaluación legal requiere revisión humana y evidencia de los procesos internos.
+    </div>
+    <section class="panel">
+        <h2>Auditorías recientes</h2>
+        <p class="muted">Hasta 50 registros recientes · Acceso restringido según tu rol</p>
+        {% if audits %}
+            <div class="table-wrap">
+                <table>
+                    <tr>
+                        <th>SITIO WEB</th>
+                        <th>FECHA</th>
+                        <th>ANÁLISIS</th>
+                        <th></th>
+                    </tr>
+                    {% for a in audits %}
+                        <tr>
+                            <td>
+                                <strong>{{ a.url }}</strong>
+                                <small>Informe #{{ a.pk }}</small>
+                            </td>
+                            <td>{{ a.created|date:'d M Y' }}</td>
+                            <td>
+                                <span class="badge">
+                                    {% if a.error %}
+                                        No completado
+                                    {% else %}
+                                        Consultar revisión manual
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td>
+                                <a href="{% url 'detail' a.pk %}">Ver informe →</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </table>
+            </div>
+            <small>Consulta el detalle para ver el estado actual de cada criterio.</small>
+        {% else %}
+            <div class="empty">
+                <span>◎</span>
+                <h3>El primer paso es conocer tu sitio</h3>
+                <p>Agrega una URL para iniciar una revisión y generar su informe.</p>
+                <a class="button" href="{% url 'new' %}">Crear primera auditoría</a>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}
