@@ -10,7 +10,7 @@ from django.http import HttpResponse
 from django.shortcuts import render,redirect,get_object_or_404
 from django.views.decorators.http import require_POST
 from .models import Audit,Review,Event
-from .forms import AuditForm,ReviewForm,SendForm
+from .forms import AuditForm,ReviewForm,SendForm,RegistrationForm
 from .scanner import scan,CRITERIA
 from .reports import pdf
 logger=logging.getLogger(__name__)
@@ -93,3 +93,33 @@ def delete(request,pk):
     messages.success(request,'Auditoría y revisiones eliminadas.')
     return redirect('dashboard')
 def privacy(request): return render(request,'privacy.html')
+
+
+def register(request):
+    if request.user.is_authenticated:
+        return redirect('dashboard')
+    form = RegistrationForm(request.POST if request.method == 'POST' else None)
+    if request.method == 'POST':
+        # Do not trust client-supplied X-Forwarded-For. Configure REMOTE_ADDR
+        # at the trusted proxy and use a shared cache in multi-worker deployments.
+        from hashlib import sha256
+        key = 'signup-' + sha256(request.META.get('REMOTE_ADDR', 'unknown').encode()).hexdigest()
+        cache.add(key, 0, 900)
+        try:
+            attempts = cache.incr(key)
+        except ValueError:
+            cache.add(key, 1, 900)
+            attempts = 1
+        if attempts > 5:
+            form.add_error(None, 'Demasiados intentos. Espera 15 minutos antes de volver a registrarte.')
+            response = render(request, 'registration/register.html', {'form': form}, status=429)
+            response['Retry-After'] = '900'
+            return response
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.is_staff = False
+            user.is_superuser = False
+            user.save()
+            messages.success(request, 'Tu cuenta está creada. Inicia sesión con tu usuario y contraseña.')
+            return redirect('login')
+    return render(request, 'registration/register.html', {'form': form})
