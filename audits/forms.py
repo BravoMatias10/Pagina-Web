@@ -11,3 +11,12 @@ class ReviewForm(forms.ModelForm):
 class SendForm(forms.Form):
     recipient=forms.EmailField(label='Correo del destinatario')
     confirm=forms.BooleanField(label='Confirmo el destinatario y autorizo enviarle este informe.')
+
+
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import get_user_model
+
+class RegistrationForm(UserCreationForm):
+    class Meta(UserCreationForm.Meta):
+        model = get_user_model()
+        fields = ('username',)
