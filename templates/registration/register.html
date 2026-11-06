@@ -1,15 +1,22 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% block content %}
-<div class="eyebrow">TU ESPACIO DE AUDITORÍAS</div>
-<h1>Crea tu cuenta</h1>
-<p>Guarda tus revisiones y genera informes de privacidad.</p>
-<section class="panel narrow">
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <p class="muted">Usaremos tu nombre de usuario para identificar tu cuenta y asociar tus auditorías. No incluyas tu RUT ni datos sensibles. Consulta la <a href="{% url 'privacy' %}">información de privacidad</a>.</p>
-    <button type="submit">Crear cuenta</button>
-  </form>
-  <p>¿Ya tienes cuenta? <a href="{% url 'login' %}">Iniciar sesión</a></p>
-</section>
+    <div class="eyebrow">TU ESPACIO DE AUDITORÍAS</div>
+    <h1>Crea tu cuenta</h1>
+    <p>Guarda tus revisiones y genera informes de privacidad.</p>
+    <section class="panel narrow">
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <p class="muted">
+                Usaremos tu nombre de usuario para identificar tu cuenta y asociar tus auditorías. No incluyas tu RUT ni datos sensibles. Consulta la
+                <a href="{% url 'privacy' %}">información de privacidad</a>
+                .
+            </p>
+            <button type="submit">Crear cuenta</button>
+        </form>
+        <p>
+            ¿Ya tienes cuenta?
+            <a href="{% url 'login' %}">Iniciar sesión</a>
+        </p>
+    </section>
 {% endblock %}
