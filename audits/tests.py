@@ -74,3 +74,49 @@ class ApplicationTests(TestCase):
         self.client.post(f'/auditoria/{self.audit.pk}/',{'form-TOTAL_FORMS':'1','form-INITIAL_FORMS':'1','form-MIN_NUM_FORMS':'0','form-MAX_NUM_FORMS':'1000','form-0-id':str(other_review.pk),'form-0-status':'yes','form-0-evidence':'Alterado'})
         other_review.refresh_from_db()
         self.assertEqual(other_review.status,'pending')
+
+
+@override_settings(SECURE_SSL_REDIRECT=False)
+class RegistrationTests(TestCase):
+    def setUp(self):
+        cache.clear()
+        self.data = {'username': 'nuevo', 'password1': 'Long-unique-Password-683!', 'password2': 'Long-unique-Password-683!'}
+
+    def test_register_page_and_login_link(self):
+        self.assertContains(self.client.get('/registro/'), 'Crear cuenta')
+        self.assertContains(self.client.get('/cuentas/login/'), '/registro/')
+
+    def test_create_normal_account_and_login(self):
+        response = self.client.post('/registro/', {**self.data, 'is_staff': 'on', 'is_superuser': 'on'})
+        self.assertRedirects(response, '/cuentas/login/')
+        user = get_user_model().objects.get(username='nuevo')
+        self.assertFalse(user.is_staff)
+        self.assertFalse(user.is_superuser)
+        self.assertTrue(user.check_password(self.data['password1']))
+        self.assertTrue(self.client.login(username='nuevo', password=self.data['password1']))
+        self.assertEqual(self.client.get('/').status_code, 200)
+        self.assertEqual(self.client.get('/admin/').status_code, 302)
+
+    def test_reject_invalid_passwords_and_duplicates(self):
+        for data in ({**self.data, 'password2': 'different'}, {**self.data, 'password1': '123', 'password2': '123'}):
+            self.assertEqual(self.client.post('/registro/', data).status_code, 200)
+        self.assertFalse(get_user_model().objects.exists())
+        self.client.post('/registro/', self.data)
+        self.assertEqual(self.client.post('/registro/', self.data).status_code, 200)
+        self.assertEqual(get_user_model().objects.count(), 1)
+
+    def test_rate_limit(self):
+        for _ in range(5):
+            self.assertEqual(self.client.post('/registro/', {}).status_code, 200)
+        response = self.client.post('/registro/', self.data)
+        self.assertEqual(response.status_code, 429)
+        self.assertFalse(get_user_model().objects.exists())
+
+    def test_registration_csrf_required(self):
+        from django.test import Client
+        self.assertEqual(Client(enforce_csrf_checks=True).post('/registro/', self.data).status_code, 403)
+
+    def test_authenticated_user_redirects(self):
+        user = get_user_model().objects.create_user('existente', password='Example-strong-875!')
+        self.client.force_login(user)
+        self.assertRedirects(self.client.get('/registro/'), '/')
