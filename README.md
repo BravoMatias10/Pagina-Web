@@ -18,7 +18,7 @@ python manage.py createsuperuser
 python manage.py runserver
 ```
 
-Abre http://127.0.0.1:8000. El administrador entra a /admin/ y crea las cuentas de usuario desde Usuarios. Las cuentas normales deben estar activas y tener contraseña, sin marcar «staff» ni «superusuario». Las cuentas staff acceden a todas las auditorías; los permisos de modelos del panel administrativo se asignan por separado.
+Abre http://127.0.0.1:8000. Cualquier visitante puede crear una cuenta desde el enlace «Crear una cuenta» en el inicio de sesión o directamente en `/registro/`. El administrador entra a /admin/ y crea las cuentas de usuario desde Usuarios. Las cuentas normales deben estar activas y tener contraseña, sin marcar «staff» ni «superusuario». Las cuentas staff acceden a todas las auditorías; los permisos de modelos del panel administrativo se asignan por separado.
 
 En Linux/macOS:
 
@@ -43,7 +43,7 @@ No hay cuentas ni contraseñas de demostración incluidas.
 5. Descarga PDF o confirma un destinatario y solicita envío por correo.
 6. Puedes eliminar la auditoría con sus revisiones. Permanece un evento mínimo de eliminación sin URL ni evidencia.
 
-El administrador gestiona cuentas y puede consultar auditorías, revisiones y eventos. No se permite autorregistro. No se envió ningún mensaje real durante la construcción.
+El administrador gestiona cuentas y puede consultar auditorías, revisiones y eventos. Se permite el registro público en `/registro/` con nombre de usuario y contraseña; las nuevas cuentas no tienen permisos administrativos. No se solicita ni verifica correo electrónico. No se envió ningún mensaje real durante la construcción.
 
 ## Correo SMTP
 
@@ -97,3 +97,10 @@ Esta es una primera versión funcional; no está desplegada ni preparada para ab
 ## Estructura
 
 `config/`: configuración; `audits/`: modelos, permisos, escáner, PDF, correo y pruebas; `templates/`: interfaz responsive; `audits/migrations/`: esquema versionado. No se incluyen base de datos, secretos, correos ni datos reales.
+
+
+## Registro público
+
+Las cuentas nuevas son usuarios normales y solo pueden acceder a sus propias auditorías. Se utilizan los validadores y el hash de contraseñas de Django, confirmación de contraseña y protección CSRF. Hay un límite básico de cinco intentos de registro por dirección de conexión en quince minutos. Para varios procesos configura caché compartida y límites adicionales en el proxy. No hay verificación por correo ni CAPTCHA; la recuperación de cuenta sigue siendo administrada por el operador. Completa la información de privacidad antes de abrir el servicio al público.
+
+Para actualizar una instalación existente descargada como ZIP, detén el servidor y reemplaza únicamente `audits/forms.py`, `audits/views.py`, `audits/urls.py`, `audits/tests.py`, `templates/registration/login.html`, `templates/privacy.html`, `README.md` y agrega `templates/registration/register.html`. Conserva `db.sqlite3` y `.venv`. No hacen falta nuevas migraciones ni dependencias para esta actualización.
